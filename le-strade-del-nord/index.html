@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f0f0f">
+<title>Le Strade del Nord · 2026</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #E8C84A;
+  --green: #1E8A3C;
+  --bg: #0f0f0f;
+  --bg2: #181818;
+  --bg3: #222;
+  --bg4: #2a2a2a;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0f0f0;
+  --text2: #b0b0b0;
+  --text3: #888;
+  --r: 12px;
+  --rsm: 8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;line-height:1.5;min-height:100dvh;overflow-x:hidden;}
+.book{width:100%;max-width:680px;margin:0 auto;}
+.page{display:none;}
+.page.active{display:block;animation:fi .22s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{background:var(--bg2);min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem 2rem;position:relative;overflow:hidden;text-align:center;}
+.cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold);}
+.c-eye{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:4px;color:var(--text3);text-transform:uppercase;margin-bottom:1.5rem;}
+.c-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(48px,14vw,72px);font-weight:700;color:var(--text);line-height:0.95;letter-spacing:1px;margin-bottom:8px;}
+.c-sub{font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--gold);letter-spacing:3px;margin-bottom:2rem;}
+.c-route{font-size:14px;color:var(--text3);line-height:2.2;margin-bottom:0.5rem;}
+.c-route b{color:var(--text2);font-weight:500;}
+.c-tag{font-size:12px;color:var(--text3);letter-spacing:1px;margin-bottom:2.5rem;}
+.c-menu{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:400px;}
+.c-menu button{background:transparent;border:0.5px solid var(--border2);color:var(--text3);font-family:'Barlow',sans-serif;font-size:13px;padding:12px 10px;border-radius:var(--rsm);cursor:pointer;transition:all .2s;text-align:left;line-height:1.3;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.c-menu button:active{background:rgba(232,200,74,.08);border-color:var(--gold);color:var(--gold);}
+.c-menu button span{display:block;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:2px;}
+
+/* STAGE */
+.stage{display:flex;flex-direction:column;min-height:100dvh;}
+.s-hdr{padding:1.25rem 1.25rem 1rem;background:var(--bg2);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);}
+.s-hdr-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;}
+.s-day{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.s-name{font-family:'Barlow Condensed',sans-serif;font-size:clamp(22px,6vw,30px);font-weight:700;color:var(--text);line-height:1.0;}
+.s-fr{font-size:13px;color:var(--text3);font-style:italic;margin-top:4px;}
+.badges{display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0;}
+.badge{font-family:'Barlow Condensed',sans-serif;font-size:12px;padding:4px 10px;border-radius:20px;font-weight:600;white-space:nowrap;letter-spacing:.5px;}
+.b-ride{background:var(--gold);color:#111;}
+.b-rest{background:var(--bg3);color:var(--text3);border:.5px solid var(--border2);}
+.b-move{background:var(--bg3);color:var(--text3);border:.5px solid var(--border);}
+
+.s-body{flex:1;padding:1.25rem 1.25rem 0;background:var(--bg2);}
+
+.stats{display:flex;gap:8px;margin-bottom:1.1rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;}
+.stats::-webkit-scrollbar{display:none;}
+.stat{display:flex;flex-direction:column;align-items:center;background:var(--bg3);border:.5px solid var(--border);border-radius:var(--rsm);padding:10px 16px;flex-shrink:0;min-width:72px;}
+.sv{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text);line-height:1;}
+.sl{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+
+.pw{border:.5px solid var(--border);border-radius:var(--rsm);overflow:hidden;margin-bottom:1.1rem;}
+.pl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;padding:6px 12px;background:rgba(0,0,0,.4);border-bottom:.5px solid var(--border);}
+.pw svg{display:block;width:100%;background:#141414;}
+
+.desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:1.1rem;border-left:2px solid var(--gold);padding-left:12px;}
+.desc-g{border-left-color:var(--green);}
+
+.sec-ttl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+.sects{display:flex;flex-direction:column;gap:8px;margin-bottom:1.1rem;}
+.sect{background:var(--bg3);border:.5px solid var(--border);border-radius:var(--rsm);padding:12px 14px;}
+.sn{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.sd{font-size:13px;color:var(--text3);line-height:1.5;}
+.ss{font-size:13px;color:var(--gold);margin:4px 0;}
+
+.accom{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text3);background:var(--bg3);border-radius:var(--rsm);padding:12px 14px;margin-bottom:1.1rem;line-height:1.5;}
+.ai{flex-shrink:0;font-size:16px;margin-top:1px;}
+
+.klink{display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Barlow Condensed',sans-serif;font-size:15px;letter-spacing:1px;color:var(--green);text-decoration:none;border:.5px solid rgba(30,138,60,.35);border-radius:var(--rsm);padding:14px;margin-bottom:1.1rem;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.klink:active{background:rgba(30,138,60,.1);}
+
+.icard{background:var(--bg3);border:.5px solid var(--border);border-radius:var(--rsm);padding:14px 16px;margin-bottom:1.1rem;font-size:14px;color:var(--text2);line-height:1.7;}
+.icard strong{color:var(--text);font-weight:500;}
+
+.acts{display:flex;flex-direction:column;gap:12px;margin-bottom:1.1rem;}
+.act{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--text2);line-height:1.5;}
+.act-ic{width:34px;height:34px;border-radius:var(--rsm);background:var(--bg3);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.act strong{color:var(--text);font-weight:500;}
+
+.summ{background:var(--bg3);border:.5px solid var(--border);border-radius:var(--rsm);padding:14px 16px;margin-bottom:1.1rem;}
+.summ-t{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+.summ p{font-size:14px;color:var(--text2);line-height:2;}
+.summ strong{color:var(--text);}
+.summ-n{font-size:12px;color:var(--text3);font-style:italic;margin-top:8px;}
+
+.s-end{height:1.25rem;background:var(--bg2);}
+
+.dots{display:flex;justify-content:center;gap:8px;padding:14px 0 0;background:var(--bg2);}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border2);border:none;cursor:pointer;padding:0;transition:background .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.dot.on{background:var(--gold);}
+
+.nav{display:flex;align-items:center;gap:8px;padding:12px 1.25rem max(1.5rem, env(safe-area-inset-bottom));background:var(--bg2);border-top:.5px solid var(--border);position:sticky;bottom:0;z-index:10;}
+.nb{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text2);background:var(--bg3);border:.5px solid var(--border);border-radius:var(--rsm);padding:12px 16px;cursor:pointer;transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:46px;}
+.nb:active{background:var(--bg4);color:var(--text);}
+.nb-home{padding:12px 14px;font-size:18px;flex-shrink:0;}
+.nb-g{flex:1;}
+.pi{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--text3);letter-spacing:2px;flex-shrink:0;min-width:40px;text-align:center;}
+
+.ax{font-size:9px;fill:#777;font-family:'Barlow',sans-serif;}
+.al{font-size:8.5px;font-family:'Barlow',sans-serif;}
+</style>
+</head>
+<body>
+<div class="book">
+
+<!-- COVER -->
+<div class="page active" id="p0">
+<div class="cover">
+  <div class="c-eye">Roadbook · Agosto 2026</div>
+  <div class="c-title">Le Strade<br>del Nord</div>
+  <div class="c-sub">2 – 9 Agosto 2026</div>
+  <div class="c-route"><b>Torino</b> → Roubaix → <b>Gent</b><br>→ <b>Liegi</b> → Colmar · <b>Alsazia</b><br>→ <b>Vallese</b> → Torino</div>
+  <div class="c-tag">8 giorni · 3 classiche · profili da GPX reali</div>
+  <div class="c-menu">
+    <button onclick="g(1)"><span>Dom 2</span>Trasferimento</button>
+    <button onclick="g(2)"><span>Lun 3</span>Paris–Roubaix</button>
+    <button onclick="g(3)"><span>Mar 4</span>Gent libero</button>
+    <button onclick="g(4)"><span>Mer 5</span>Tour des Flandres</button>
+    <button onclick="g(5)"><span>Gio 6</span>Liège libero</button>
+    <button onclick="g(6)"><span>Ven 7</span>LBL</button>
+    <button onclick="g(7)"><span>Sab 8</span>Route des Vins</button>
+    <button onclick="g(8)"><span>Dom 9</span>Vallese · Rientro</button>
+  </div>
+</div>
+</div>
+
+<!-- P1: Trasferimento -->
+<div class="page" id="p1"><div class="stage">
+  <div class="s-hdr"><div class="s-hdr-inner">
+    <div><div class="s-day">Domenica 2 agosto</div><div class="s-name">Torino → Roubaix</div><div class="s-fr">Transfert · ~900 km · ~9h</div></div>
+    <div class="badges"><span class="badge b-move">🚐 Trasferimento</span></div>
+  </div></div>
+  <div class="s-body">
+    <div class="icard"><strong>Partenza mattina presto</strong> da Torino. Autostrada via Lione e Parigi — circa 900 km, 9 ore di guida.<br><br>Il <strong>Vieux-Lille</strong> (Rijsel per i fiamminghi) vale la prima birra del viaggio — 20 minuti dal campeggio, infinitamente più interessante di Roubaix stessa.</div>
+    <div class="desc">Giornata di transizione. Arrivare, sistemare il furgone, ricognizione logistica. Domani si soffre sul pavé.</div>
+    <div class="accom"><span class="ai">🏕️</span><span>Notte: bungalow campeggio — zona Roubaix · ~28€/persona · Camping Parc des Cygnes (Arras) o simili</span></div>
+  </div>
+  <div class="s-end"></div>
+  <div class="dots" id="d1"></div>
+  <div class="nav">
+    <button class="nb nb-home" onclick="g(0)">⌂</button>
+    <button class="nb nb-g" onclick="g(0)">← Indietro</button>
+    <span class="pi">1 / 8</span>
+    <button class="nb nb-g" onclick="g(2)">Roubaix →</button>
+  </div>
+</div></div>
+
+<!-- P2: Paris–Roubaix -->
+<div class="page" id="p2"><div class="stage">
+  <div class="s-hdr"><div class="s-hdr-inner">
+    <div><div class="s-day">Lunedì 3 agosto</div><div class="s-name">Paris–Roubaix</div><div class="s-fr">L'Enfer du Nord · 124 km</div></div>
+    <div class="badges"><span class="badge b-ride">🚴 124 km</span><span class="badge b-ride">↑ 299 m</span></div>
+  </div></div>
+  <div class="s-body">
+    <div class="stats">
+      <div class="stat"><span class="sv">124</span><span class="sl">km</span></div>
+      <div class="stat"><span class="sv">299</span><span class="sl">D+ m</span></div>
+      <div class="stat"><span class="sv">15–67</span><span class="sl">quota m</span></div>
+      <div class="stat"><span class="sv">29</span><span class="sl">settori</span></div>
+    </div>
+    <div class="pw">
+      <div class="pl">Profilo altimetrico reale · GPX · 124 km · 15–67 m</div>
+      <svg viewBox="0 0 680 115" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8C84A" stop-opacity="0.5"/><stop offset="100%" stop-color="#E8C84A" stop-opacity="0.03"/></linearGradient></defs>
+        <path d="M12,76 L16,72 L19,62 L26,63 L33,53 L40,8 L44,13 L52,39 L57,48 L64,32 L70,25 L73,29 L84,65 L92,66 L101,67 L109,78 L122,75 L128,77 L136,85 L152,88 L165,88 L172,82 L179,88 L187,88 L196,83 L211,71 L226,86 L244,88 L264,86 L280,87 L309,89 L332,88 L350,79 L364,66 L376,64 L387,48 L405,51 L417,57 L440,42 L453,54 L467,62 L477,56 L496,60 L512,56 L524,78 L534,65 L548,57 L567,59 L583,56 L609,67 L632,71 L668,59 L668,105 L12,105 Z" fill="url(#g1)" stroke="#E8C84A" stroke-width="1.5"/>
+        <line x1="40" y1="8" x2="40" y2="105" stroke="#E8C84A" stroke-width=".7" stroke-dasharray="3,3" opacity=".7"/>
+        <text x="42" y="18" class="al" fill="#E8C84A">Arenberg</text>
+        <line x1="484" y1="48" x2="484" y2="105" stroke="#E8C84A" stroke-width=".7" stroke-dasharray="3,3" opacity=".7"/>
+        <text x="448" y="42" class="al" fill="#E8C84A">Carrefour</text>
+        <text x="12" y="113" class="ax">0 km</text><text x="340" y="113" class="ax" text-anchor="middle">62 km</text><text x="668" y="113" class="ax" text-anchor="end">124 km</text>
+        <text x="12" y="13" class="ax">67 m</text><text x="12" y="104" class="ax">15 m</text>
+      </svg>
+    </div>
+    <div class="desc">L'Enfer du Nord. Il terreno è quasi pianeggiante — i 299 m di D+ sono ingannevolmente bassi. La fatica viene dal pavé: ogni settore è una percussione continua che drena le energie in modo diverso dal dislivello. Le bici tremano, le mani dolgono, la schiena cede prima delle gambe.</div>
+    <div class="sec-ttl">Settori chiave · difficoltà P1–P5</div>
+    <div class="sects">
+      <div class="sect"><div class="sn">Trouée d'Arenberg</div><div class="sd">2,4 km · pavé P5</div><div class="ss">★★★★★</div><div class="sd">Rettilineo in foresta, nessuna via di uscita. Il più iconico.</div></div>
+      <div class="sect"><div class="sn">Carrefour de l'Arbre</div><div class="sd">2,1 km · pavé P5</div><div class="ss">★★★★★</div><div class="sd">A 17 km dall'arrivo. Qui si decide tutto.</div></div>
+      <div class="sect"><div class="sn">Mons-en-Pévèle</div><div class="sd">3 km · pavé P4</div><div class="ss">★★★★☆</div><div class="sd">Il più lungo del percorso. Logorante.</div></div>
+    </div>
+    <a class="klink" href="https://www.komoot.com/it-it/tour/2930716446?share_token=aXT5KozKDIBskHyrILJ4ZqIz7h6BIB6gjyFvJPmzZC4lJ4LkHR" target="_blank">↗ Apri su Komoot</a>
+    <div class="accom"><span class="ai">🏕️</span><span>Sera: furgone → Oudenaarde (~80 km, ~1h) · bungalow campeggio · ~28€/persona</span></div>
+  </div>
+  <div class="s-end"></div>
+  <div class="dots" id="d2"></div>
+  <div class="nav">
+    <button class="nb nb-home" onclick="g(0)">⌂</button>
+    <button class="nb nb-g" onclick="g(1)">← Dom 2</button>
+    <span class="pi">2 / 8</span>
+    <button class="nb nb-g" onclick="g(3)">Gent →</button>
+  </div>
+</div></div>
+
+<!-- P3: Gent -->
+<div class="page" id="p3"><div class="stage">
+  <div class="s-hdr"><div class="s-hdr-inner">
+    <div><div class="s-day">Martedì 4 agosto</div><div class="s-name">Gent – Libero</div><div class="s-fr">Repos & Culture · Gent, Belgique</div></div>
+    <div class="badges"><span class="badge b-rest">Riposo</span></div>
+  </div></div>
+  <div class="s-body">
+    <div class="desc">Gent è la risposta onesta a Bruges. Meno cartolina, più città vera. Università, canali, castello medievale nel mezzo del centro — e birre che Bruges non si sogna.</div>
+    <div class="acts">
+      <div class="act"><div class="act-ic">🏰</div><span><strong>Gravensteen</strong> — castello del X secolo nel cuore della città. Ingresso ~12€.</span></div>
+      <div class="act"><div class="act-ic">🌿</div><span><strong>Graslei</strong> — banchine medievali lungo il Lys. Il punto fotografico.</span></div>
+      <div class="act"><div class="act-ic">🍺</div><span><strong>Gruut Brewery</strong> — fermenta con erbe invece di luppolo. Raro e interessante.</span></div>
+      <div class="act"><div class="act-ic">🚶</div><span>Korenmarkt, Vrijdagmarkt, quartiere universitario. Solo a piedi.</span></div>
+    </div>
+    <div class="accom"><span class="ai">🏕️</span><span>Notte: stesso bungalow di lunedì — zona Oudenaarde · ~28€/persona</span></div>
+  </div>
+  <div class="s-end"></div>
+  <div class="dots" id="d3"></div>
+  <div class="nav">
+    <button class="nb nb-home" onclick="g(0)">⌂</button>
+    <button class="nb nb-g" onclick="g(2)">← Lun 3</button>
+    <span class="pi">3 / 8</span>
+    <button class="nb nb-g" onclick="g(4)">Fiandres →</button>
+  </div>
+</div></div>
+
+<!-- P4: Fiandre -->
+<div class="page" id="p4"><div class="stage">
+  <div class="s-hdr"><div class="s-hdr-inner">
+    <div><div class="s-day">Mercoledì 5 agosto</div><div class="s-name">Giro delle Fiandre</div><div class="s-fr">Ronde van Vlaanderen · 84 km</div></div>
+    <div class="badges"><span class="badge b-ride">🚴 84 km</span><span class="badge b-ride">↑ 888 m</span></div>
+  </div></div>
+  <div class="s-body">
+    <div class="stats">
+      <div class="stat"><span class="sv">84</span><span class="sl">km</span></div>
+      <div class="stat"><span class="sv">888</span><span class="sl">D+ m</span></div>
+      <div class="stat"><span class="sv">6–124</span><span class="sl">quota m</span></div>
+      <div class="stat"><span class="sv">19%</span><span class="sl">max pend.</span></div>
+    </div>
+    <div class="pw">
+      <div class="pl">Profilo altimetrico reale · GPX · 84 km · 6–124 m</div>
+      <svg viewBox="0 0 680 115" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8C84A" stop-opacity="0.5"/><stop offset="100%" stop-color="#E8C84A" stop-opacity="0.03"/></linearGradient></defs>
+        <path d="M12,92 L36,95 L72,91 L89,47 L100,56 L111,90 L134,93 L189,83 L201,7 L216,1 L220,15 L242,64 L261,84 L290,13 L316,21 L333,7 L360,48 L380,46 L398,67 L421,71 L445,56 L460,59 L496,49 L518,60 L552,84 L585,89 L604,83 L635,93 L668,102 L668,105 L12,105 Z" fill="url(#g2)" stroke="#E8C84A" stroke-width="1.5"/>
+        <line x1="201" y1="7" x2="201" y2="105" stroke="#E8C84A" stroke-width=".7" stroke-dasharray="3,3" opacity=".8"/>
+        <text x="203" y="17" class="al" fill="#E8C84A">Koppenberg</text>
+        <line x1="421" y1="55" x2="421" y2="105" stroke="#E8C84A" stroke-width=".7" stroke-dasharray="3,3" opacity=".7"/>
+        <text x="371" y="49" class="al" fill="#E8C84A">Oude Kwaremont</text>
+        <line x1="585" y1="35" x2="585" y2="105" stroke="#E8C84A" stroke-width=".7" stroke-dasharray="3,3" opacity=".7"/>
+        <text x="549" y="30" class="al" fill="#E8C84A">Paterberg</text>
+        <text x="12" y="113" class="ax">0 km</text><text x="340" y="113" class="ax" text-anchor="middle">42 km</text><text x="668" y="113" class="ax" text-anchor="end">84 km</text>
+        <text x="12" y="11" class="ax">124 m</text><text x="12" y="104" class="ax">6 m</text>
+      </svg>
+    </div>
+    <div class="desc">Non farti ingannare dalla distanza. 84 km con 888 m di D+ reali — i guadagni altimetrici avvengono su 400–600 metri con pendenze del 19–22% che costringono fuori sella quasi tutti. I muri fiamminghi sono brutali per la loro brevità: non c'è tempo di trovare il ritmo.</div>
+    <div class="sec-ttl">I muri del finale</div>
+    <div class="sects">
+      <div class="sect"><div class="sn">Koppenberg</div><div class="sd">0,6 km · 22% max · pavé</div><div class="ss">★★★★★</div><div class="sd">Pavé sconnesso, curva cieca. Si può essere costretti a mettere piede a terra.</div></div>
+      <div class="sect"><div class="sn">Paterberg</div><div class="sd">0,4 km · 20% max</div><div class="ss">★★★★★</div><div class="sd">Il più corto e il più ripido. Decide la gara in 400 metri.</div></div>
+      <div class="sect"><div class="sn">Oude Kwaremont</div><div class="sd">2,2 km · 11% max · pavé</div><div class="ss">★★★★☆</div><div class="sd">Lungo, gradiente costante, pavé irregolare. Terzo dall'ultimo.</div></div>
+    </div>
+    <a class="klink" href="https://www.komoot.com/it-it/tour/2930735233?share_token=aK4px06TzLO2yshDBxBOk1Zkw5Ug44L2yt6yczK6ACrAUq9Oyo&ref=wtd&t_s=referral&t_cid=route_share&t_ref_username=890723021690" target="_blank">↗ Apri su Komoot</a>
+    <div class="accom"><span class="ai">🏕️</span><span>Sera: furgone → Liegi (~150 km, ~1h45) · bungalow campeggio · ~28€/persona</span></div>
+  </div>
+  <div class="s-end"></div>
+  <div class="dots" id="d4"></div>
+  <div class="nav">
+    <button class="nb nb-home" onclick="g(0)">⌂</button>
+    <button class="nb nb-g" onclick="g(3)">← Mar 4</button>
+    <span class="pi">4 / 8</span>
+    <button class="nb nb-g" onclick="g(5)">Liège →</button>
+  </div>
+</div></div>
+
+<!-- P5: Liegi libero -->
+<div class="page" id="p5"><div class="stage">
+  <div class="s-hdr"><div class="s-hdr-inner">
+    <div><div class="s-day">Giovedì 6 agosto</div><div class="s-name">Liegi – Libero</div><div class="s-fr">Repos & Culture · Liège, Belgique</div></div>
+    <div class="badges"><span class="badge b-rest">Riposo</span></div>
+  </div></div>
+  <div class="s-body">
+    <div class="desc">Liegi è la più ruvida e autentica del Belgio turistico. Niente facsimile medievale — città industriale con carattere, birre walloone e una scalinata che toglie il respiro anche il giorno dopo il Fiandre.</div>
+    <div class="acts">
+      <div class="act"><div class="act-ic">🪜</div><span><strong>Montagne de Bueren</strong> — 374 gradini con vista panoramica. Iconici.</span></div>
+      <div class="act"><div class="act-ic">🛒</div><span><strong>Mercato Saint-Lambert</strong> — prodotti locali, formaggi, charcuterie. Pranzo risolto.</span></div>
+      <div class="act"><div class="act-ic">🍺</div><span><strong>La Maison du Peket</strong> — peket è il genièvre locale. Birre walloone, atmosfera vera.</span></div>
+      <div class="act"><div class="act-ic">🏛️</div><span><strong>Place du Marché</strong> — Hôtel de Ville gotico, terrasse aperte.</span></div>
+    </div>
+    <div class="accom"><span class="ai">🏕️</span><span>Notte: stesso bungalow di mercoledì — zona Liegi · ~28€/persona</span></div>
+  </div>
+  <div class="s-end"></div>
+  <div class="dots" id="d5"></div>
+  <div class="nav">
+    <button class="nb nb-home" onclick="g(0)">⌂</button>
+    <button class="nb nb-g" onclick="g(4)">← Mer 5</button>
+    <span class="pi">5 / 8</span>
+    <button class="nb nb-g" onclick="g(6)">LBL →</button>
+  </div>
+</div></div>
+
+<!-- P6: LBL -->
+<div class="page" id="p6"><div class="stage">
+  <div class="s-hdr"><div class="s-hdr-inner">
+    <div><div class="s-day">Venerdì 7 agosto</div><div class="s-name">Liège–Bastogne–Liège</div><div class="s-fr">La Doyenne · 114 km</div></div>
+    <div class="badges"><span class="badge b-ride">🚴 114 km</span><span class="badge b-ride">↑ 1.689 m</span></div>
+  </div></div>
+  <div class="s-body">
+    <div class="stats">
+      <div class="stat"><span class="sv">114</span><span class="sl">km</span></div>
+      <div class="stat"><span class="sv">1.689</span><span class="sl">D+ m</span></div>
+      <div class="stat"><span class="sv">61–555</span><span class="sl">quota m</span></div>
+      <div class="stat"><span class="sv">1892</span><span class="sl">prima ed.</span></div>
+    </div>
+    <div class="pw">
+      <div class="pl">Profilo altimetrico reale · GPX · 114 km · 61–555 m</div>
+      <svg viewBox="0 0 680 115" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8C84A" stop-opacity="0.5"/><stop offset="100%" stop-color="#E8C84A" stop-opacity="0.03"/></linearGradient></defs>
+        <path d="M12,94 L24,80 L41,58 L68,64 L93,57 L119,68 L147,74 L172,70 L191,58 L199,46 L209,18 L215,7 L229,28 L253,40 L272,38 L291,21 L305,7 L320,16 L340,34 L360,67 L378,88 L395,93 L413,94 L415,64 L427,45 L440,74 L450,39 L467,37 L482,60 L499,91 L518,79 L544,68 L557,99 L600,102 L668,102 L668,105 L12,105 Z" fill="url(#g3)" stroke="#E8C84A" stroke-width="1.5"/>
+        <line x1="215" y1="7" x2="215" y2="105" stroke="#E8C84A" stroke-width=".7" stroke-dasharray="3,3" opacity=".8"/>
+        <text x="217" y="17" class="al" fill="#E8C84A">La Redoute</text>
+        <line x1="305" y1="8" x2="305" y2="105" stroke="#E8C84A" stroke-width=".7" stroke-dasharray="3,3" opacity=".7"/>
+        <text x="270" y="17" class="al" fill="#E8C84A">Roche aux Faucons</text>
+        <line x1="450" y1="30" x2="450" y2="105" stroke="#E8C84A" stroke-width=".7" stroke-dasharray="3,3" opacity=".7"/>
+        <text x="452" y="26" class="al" fill="#E8C84A">St-Nicolas</text>
+        <text x="12" y="113" class="ax">0 km</text><text x="340" y="113" class="ax" text-anchor="middle">57 km</text><text x="668" y="113" class="ax" text-anchor="end">114 km</text>
+        <text x="12" y="11" class="ax">555 m</text><text x="12" y="104" class="ax">61 m</text>
+      </svg>
+    </div>
+    <div class="desc">La Doyenne — 1892. La più dura delle tre: 1.689 m di D+ reali in 114 km, con 26 côtes che si accumulano senza mai lasciare le gambe libere. Niente pavé, niente muri verticali — le salite delle Ardenne sono lunghe, con gradiente costante, e arrivano tutte quando sei già esausto.</div>
+    <div class="sec-ttl">Côtes decisive</div>
+    <div class="sects">
+      <div class="sect"><div class="sn">La Redoute</div><div class="sd">1,6 km · 8,9% media · 22% max</div><div class="ss">★★★★★</div><div class="sd">A 40 km dall'arrivo. Primo tratto al 22% filtra il gruppo.</div></div>
+      <div class="sect"><div class="sn">Roche aux Faucons</div><div class="sd">1,1 km · 11% media</div><div class="ss">★★★★★</div><div class="sd">A 22 km dall'arrivo. Selezioni definitive.</div></div>
+      <div class="sect"><div class="sn">Côte de Saint-Nicolas</div><div class="sd">1,2 km · 8,6% media</div><div class="ss">★★★★☆</div><div class="sd">A 5 km dall'arrivo. Chi passa davanti, vince.</div></div>
+    </div>
+    <a class="klink" href="https://www.komoot.com/it-it/tour/2930771703?share_token=agCiTzKN09Fg7SQ1Wc3Em1KRjHtzZB1C55B7JrKMfO916Bzg1W" target="_blank">↗ Apri su Komoot</a>
+    <div class="accom"><span class="ai">🏨</span><span>Sera: furgone → Colmar (~2h) · Auberge de Jeunesse HI — centrale · 30€/persona, lenzuola incluse</span></div>
+  </div>
+  <div class="s-end"></div>
+  <div class="dots" id="d6"></div>
+  <div class="nav">
+    <button class="nb nb-home" onclick="g(0)">⌂</button>
+    <button class="nb nb-g" onclick="g(5)">← Gio 6</button>
+    <span class="pi">6 / 8</span>
+    <button class="nb nb-g" onclick="g(7)">Alsazia →</button>
+  </div>
+</div></div>
+
+<!-- P7: Route des Vins -->
+<div class="page" id="p7"><div class="stage">
+  <div class="s-hdr"><div class="s-hdr-inner">
+    <div><div class="s-day">Sabato 8 agosto</div><div class="s-name">Route des Vins</div><div class="s-fr">Alsace · Étape de récupération · 88 km</div></div>
+    <div class="badges"><span class="badge b-ride">🚴 88 km</span><span class="badge b-ride">↑ 1.203 m</span></div>
+  </div></div>
+  <div class="s-body">
+    <div class="stats">
+      <div class="stat"><span class="sv">88</span><span class="sl">km</span></div>
+      <div class="stat"><span class="sv">1.203</span><span class="sl">D+ m</span></div>
+      <div class="stat"><span class="sv">190–705</span><span class="sl">quota m</span></div>
+      <div class="stat"><span class="sv">Vosgi</span><span class="sl">terrain</span></div>
+    </div>
+    <div class="pw">
+      <div class="pl">Profilo altimetrico reale · GPX · 88 km · 190–705 m</div>
+      <svg viewBox="0 0 680 115" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E8A3C" stop-opacity="0.5"/><stop offset="100%" stop-color="#1E8A3C" stop-opacity="0.03"/></linearGradient></defs>
+        <path d="M12,94 L35,93 L69,92 L80,81 L91,63 L101,66 L128,85 L168,57 L187,29 L197,9 L201,6 L211,21 L237,74 L260,72 L283,68 L320,75 L355,54 L402,90 L449,94 L493,94 L562,95 L668,100 L668,105 L12,105 Z" fill="url(#g4)" stroke="#1E8A3C" stroke-width="1.5"/>
+        <line x1="201" y1="6" x2="201" y2="105" stroke="#1E8A3C" stroke-width=".7" stroke-dasharray="3,3" opacity=".8"/>
+        <text x="162" y="16" class="al" fill="#1E8A3C">Grand Ballon 705 m</text>
+        <text x="12" y="113" class="ax">Colmar</text><text x="340" y="113" class="ax" text-anchor="middle">44 km</text><text x="668" y="113" class="ax" text-anchor="end">Colmar</text>
+        <text x="12" y="11" class="ax">705 m</text><text x="12" y="104" class="ax">190 m</text>
+      </svg>
+    </div>
+    <div class="desc desc-g">Giornata di decompressione — ma il GPX racconta 1.203 m di D+ reali e un picco a 705 m. Non è una passeggiata tra i vigneti, è una vera giornata nei Vosgi. Le salite sono regolari, senza i muri brutali dei giorni precedenti. Il paesaggio vale ogni metro.</div>
+    <div class="sects">
+      <div class="sect"><div class="sn">Grand Ballon</div><div class="sd">~705 m quota · salita regolare</div><div class="ss">🍷🍷🍷</div><div class="sd">Punto più alto — panorama sui Vosgi e la pianura del Reno.</div></div>
+      <div class="sect"><div class="sn">Riquewihr</div><div class="sd">Villaggio medievale intatto</div><div class="ss">🍷🍷🍷</div><div class="sd">Il più bello della Route des Vins. Sosta obbligatoria.</div></div>
+      <div class="sect"><div class="sn">Petite Venise · Colmar</div><div class="sd">Pomeriggio libero</div><div class="ss">🍷🍷</div><div class="sd">Canali e case colorate. Turistico ma vale.</div></div>
+    </div>
+    <a class="klink" href="https://www.komoot.com/it-it/tour/2945469639?share_token=a0HrvmIoWqbZat5uNUemci0WYOlu18xLcR9478H2RF1e7LioE1" target="_blank">↗ Apri su Komoot</a>
+    <div class="accom"><span class="ai">🏨</span><span>Notte: stesso ostello di venerdì — Auberge de Jeunesse HI Colmar · 30€/persona</span></div>
+  </div>
+  <div class="s-end"></div>
+  <div class="dots" id="d7"></div>
+  <div class="nav">
+    <button class="nb nb-home" onclick="g(0)">⌂</button>
+    <button class="nb nb-g" onclick="g(6)">← Ven 7</button>
+    <span class="pi">7 / 8</span>
+    <button class="nb nb-g" onclick="g(8)">Vallese →</button>
+  </div>
+</div></div>
+
+<!-- P8: Vallese -->
+<div class="page" id="p8"><div class="stage">
+  <div class="s-hdr"><div class="s-hdr-inner">
+    <div><div class="s-day">Domenica 9 agosto</div><div class="s-name">Val de Bagnes</div><div class="s-fr">Valais · ↑ Mauvoisin · 50 km · poi rientro</div></div>
+    <div class="badges"><span class="badge b-ride">🚴 50 km</span><span class="badge b-move">🚐 Rientro</span></div>
+  </div></div>
+  <div class="s-body">
+    <div class="stats">
+      <div class="stat"><span class="sv">50,5</span><span class="sl">km</span></div>
+      <div class="stat"><span class="sv">1.240</span><span class="sl">D+ m</span></div>
+      <div class="stat"><span class="sv">710–1950</span><span class="sl">quota m</span></div>
+      <div class="stat"><span class="sv">4,9%</span><span class="sl">pend. media</span></div>
+    </div>
+    <div class="pw">
+      <div class="pl">Profilo altimetrico reale · GPX · 50,5 km · Sembrancher – Bonatchiesse · A/R</div>
+      <svg viewBox="0 0 680 115" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8C84A" stop-opacity="0.5"/><stop offset="100%" stop-color="#E8C84A" stop-opacity="0.03"/></linearGradient></defs>
+        <path d="M12,95 L51,93 L77,90 L116,81 L142,73 L168,65 L194,56 L220,47 L246,38 L272,29 L298,21 L317,14 L330,8 L344,5 L357,8 L376,15 L402,24 L428,33 L454,42 L480,51 L506,60 L532,68 L558,76 L584,83 L610,88 L636,92 L668,95 L668,105 L12,105 Z" fill="url(#g5)" stroke="#E8C84A" stroke-width="1.5"/>
+        <line x1="344" y1="5" x2="344" y2="105" stroke="#E8C84A" stroke-width=".7" stroke-dasharray="3,3" opacity=".8"/>
+        <text x="350" y="14" class="al" fill="#E8C84A">Bonatchiesse 1.950 m</text>
+        <text x="12" y="113" class="ax">Sembrancher 710 m</text><text x="344" y="113" class="ax" text-anchor="middle">25 km · cima</text><text x="668" y="113" class="ax" text-anchor="end">Sembrancher</text>
+        <text x="12" y="11" class="ax">1.950 m</text><text x="12" y="104" class="ax">710 m</text>
+      </svg>
+    </div>
+    <div class="desc">Il percorso risale il Val de Bagnes da Sembrancher fino a Bonatchiesse, a pochi metri dalla diga di Mauvoisin (1.961 m). Andata e ritorno simmetrico: 25 km di salita continua con 1.234 m di dislivello e 4,9% di pendenza media. Finale scenografico con le Alpi del Combin sopra la testa.</div>
+    <div class="stats" style="margin-bottom:1.1rem;">
+      <div class="stat"><span class="sv">~25</span><span class="sl">km salita</span></div>
+      <div class="stat"><span class="sv">1.240</span><span class="sl">m D+</span></div>
+      <div class="stat"><span class="sv">1.950</span><span class="sl">quota max</span></div>
+      <div class="stat"><span class="sv">~2.5h</span><span class="sl">furgone</span></div>
+    </div>
+    <a class="klink" href="https://www.komoot.com/it-it/tour/2945621720?share_token=avG2PxGc79kMd4WKowt6rwLd1hFDQKVy9EWqU31XQ3JKBMpP13" target="_blank">↗ Apri su Komoot</a>
+    <div class="summ">
+      <div class="summ-t">Riepilogo costi alloggio</div>
+      <p>Roubaix 1 notte · ~28€<br>Oudenaarde 2 notti · ~56€<br>Liegi 2 notti · ~56€<br>Colmar 2 notti · ~60€<br><strong>Totale: ~200€/persona</strong></p>
+      <p class="summ-n">Prenota con anticipo — agosto in Belgio e Alsazia è alta stagione.</p>
+    </div>
+  </div>
+  <div class="s-end"></div>
+  <div class="dots" id="d8"></div>
+  <div class="nav">
+    <button class="nb nb-home" onclick="g(0)">⌂</button>
+    <button class="nb nb-g" onclick="g(7)">← Sab 8</button>
+    <span class="pi">8 / 8</span>
+    <button class="nb nb-g" onclick="g(0)">↩ Copertina</button>
+  </div>
+</div></div>
+
+</div>
+<script>
+let cur=0;
+function buildDots(){
+  for(let i=1;i<=8;i++){
+    const c=document.getElementById('d'+i);
+    if(!c)continue;
+    c.innerHTML='';
+    for(let d=0;d<8;d++){
+      const b=document.createElement('button');
+      b.className='dot'+(d===i-1?' on':'');
+      b.setAttribute('aria-label','Tappa '+(d+1));
+      const p=d+1;
+      b.onclick=()=>g(p);
+      c.appendChild(b);
+    }
+  }
+}
+function g(n){
+  document.getElementById('p'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('p'+cur).classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+// swipe
+(function(){
+  let sx=0,sy=0;
+  document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(cur===0)return;
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx)*.8)return;
+    if(dx<0&&cur<8)g(cur+1);
+    else if(dx>0&&cur>1)g(cur-1);
+  },{passive:true});
+})();
+buildDots();
+</script>
+</body>
+</html>
