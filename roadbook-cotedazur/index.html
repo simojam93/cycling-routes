@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#1a1a1a" />
+<title>Le Grand Tour de la Côte d'Azur · 2026</title>
+<meta name="description" content="Roadbook ufficiale del Grand Tour Côte d'Azur — Estérel, Col de Braus, Col de la Madone. 30 maggio – 1 giugno 2026." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+<style>
+  :root {
+    --yellow: #FFD400;        /* maillot jaune */
+    --yellow-deep: #FFB800;
+    --polka: #E63946;         /* maillot à pois */
+    --polka-deep: #B82835;
+    --green: #29A745;         /* maillot vert */
+    --white: #FBFBFB;
+    --paper: #F5EFDF;         /* old map paper */
+    --ink: #0F0F0F;
+    --ink-2: #1A1A1A;
+    --ink-3: #2A2A2A;
+    --muted: #8a8a8a;
+    --line: rgba(255, 255, 255, 0.08);
+    --azur: #0B6FA7;
+    --azur-2: #4FB6E0;
+    --sand: #E8D4A2;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--ink);
+    color: var(--white);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--yellow); color: var(--ink); }
+
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .display { font-family: 'Anton', 'Bebas Neue', sans-serif; letter-spacing: 0.02em; }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    padding: 4rem 6vw 6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at top right, rgba(255, 212, 0, 0.18), transparent 55%),
+      radial-gradient(ellipse at 20% 80%, rgba(11, 111, 167, 0.22), transparent 55%),
+      linear-gradient(180deg, #0a0a0a 0%, #141414 100%);
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg, transparent 0 22px, rgba(255,255,255,0.012) 22px 23px),
+      repeating-linear-gradient(-45deg, transparent 0 22px, rgba(255,255,255,0.012) 22px 23px);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -120px;
+    top: -120px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--polka) 0 30%, transparent 30.5%) 0 0 / 32px 32px;
+    opacity: 0.06;
+    transform: rotate(8deg);
+    pointer-events: none;
+  }
+
+  .topbar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    z-index: 2;
+  }
+
+  .topbar .badge {
+    color: var(--yellow);
+    border: 1px solid var(--yellow);
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+  }
+
+  .hero-main {
+    position: relative;
+    z-index: 2;
+    margin-top: 8vh;
+  }
+
+  .kicker {
+    color: var(--yellow);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .kicker::before {
+    content: "";
+    display: inline-block;
+    width: 3rem;
+    height: 2px;
+    background: var(--yellow);
+  }
+
+  h1.title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(3.5rem, 11vw, 10rem);
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    margin: 0 0 1rem;
+    text-transform: uppercase;
+  }
+
+  h1.title .em {
+    color: var(--yellow);
+    font-style: italic;
+    display: inline-block;
+    transform: skew(-6deg);
+  }
+
+  .sub {
+    font-size: clamp(1rem, 1.5vw, 1.3rem);
+    color: #c8c8c8;
+    max-width: 620px;
+    margin-top: 1.5rem;
+    font-weight: 300;
+  }
+
+  .hero-footer {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .stat .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  .stat .value {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1;
+    color: var(--white);
+  }
+  .stat .value .unit {
+    font-size: 0.45em;
+    color: var(--yellow);
+    margin-left: 0.2em;
+  }
+
+  /* ============ DIVIDER ============ */
+  .stripe {
+    height: 18px;
+    background:
+      repeating-linear-gradient(90deg,
+        var(--polka) 0 28px,
+        var(--white) 28px 56px,
+        var(--ink) 56px 84px,
+        var(--yellow) 84px 112px
+      );
+    position: relative;
+  }
+
+  /* ============ INTRO ============ */
+  .intro {
+    background: var(--ink);
+    padding: 6rem 6vw 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .intro .label-block {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--yellow);
+    margin-bottom: 1rem;
+  }
+  .intro h2 {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1;
+    margin: 0 0 1.5rem;
+    text-transform: uppercase;
+  }
+  .intro p {
+    font-size: 1.05rem;
+    color: #cdcdcd;
+    margin: 0 0 1rem;
+    max-width: 60ch;
+  }
+  .intro .pullquote {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+    line-height: 1.1;
+    color: var(--white);
+    border-left: 4px solid var(--yellow);
+    padding-left: 1.5rem;
+  }
+  .intro .pullquote .signature {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  /* ============ STAGES ============ */
+  .stages {
+    background: #0c0c0c;
+    padding: 0 0 6rem;
+  }
+
+  .stage {
+    padding: 6rem 6vw 4rem;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .stage:last-child { border-bottom: 0; }
+
+  .stage-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 2rem;
+    align-items: end;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed rgba(255, 212, 0, 0.25);
+  }
+
+  .stage-number {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(5rem, 12vw, 11rem);
+    line-height: 0.82;
+    color: var(--yellow);
+    background: var(--ink);
+    padding: 0 0.05em;
+    letter-spacing: -0.02em;
+  }
+
+  .stage-title-wrap .day {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .stage-title-wrap h2 {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+    line-height: 0.9;
+    margin: 0 0 0.6rem;
+    text-transform: uppercase;
+  }
+  .stage-title-wrap .from-to {
+    font-family: 'JetBrains Mono', monospace;
+    color: #d9d9d9;
+    font-size: 0.95rem;
+  }
+  .stage-title-wrap .from-to .arrow {
+    color: var(--yellow);
+    margin: 0 0.5rem;
+  }
+
+  .stage-cat {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+  .stage-cat .pill {
+    display: inline-block;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    margin-left: 0.4rem;
+    font-weight: 600;
+  }
+  .pill-easy { background: var(--green); color: var(--white); }
+  .pill-medium { background: var(--yellow); color: var(--ink); }
+  .pill-hard { background: var(--polka); color: var(--white); }
+  .pill-hc { background: var(--ink); color: var(--white); border: 2px solid var(--polka); }
+
+  /* stage stats row */
+  .stage-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(255,212,0,0.04), rgba(255,212,0,0.01));
+    border: 1px solid rgba(255, 212, 0, 0.15);
+    border-radius: 8px;
+  }
+  .stage-stats .stat .value { font-size: clamp(1.5rem, 2.8vw, 2.2rem); }
+
+  /* main panels: map + chart */
+  .stage-panels {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .panel {
+    background: #161616;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .panel .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .panel .panel-head h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    margin: 0;
+    color: var(--yellow);
+  }
+  .panel .panel-head .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .map {
+    height: 460px;
+    width: 100%;
+    background: #1a1a1a;
+  }
+
+  .chart-wrap {
+    padding: 1rem 1.2rem 1.2rem;
+    height: 460px;
+    position: relative;
+  }
+  .chart-wrap canvas { width: 100% !important; height: 100% !important; }
+
+  /* climbs table */
+  .climbs {
+    margin-bottom: 2.5rem;
+  }
+  .climbs h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--polka);
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .climbs h3::before {
+    content: "";
+    display: inline-block;
+    width: 18px; height: 18px;
+    background: radial-gradient(circle, var(--polka) 0 40%, var(--white) 40%);
+    border-radius: 4px;
+  }
+  .climb-row {
+    display: grid;
+    grid-template-columns: 60px 1fr auto auto auto;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1rem 1.2rem;
+    background: #161616;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--polka);
+    border-radius: 6px;
+    margin-bottom: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+  }
+  .climb-row .cat {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.8rem;
+    color: var(--polka);
+    line-height: 1;
+    text-align: center;
+  }
+  .climb-row .name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--white);
+  }
+  .climb-row .name small {
+    display: block;
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .climb-row .m {
+    color: #d9d9d9;
+    text-align: right;
+  }
+  .climb-row .m .lbl {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.2rem;
+  }
+
+  /* stage actions (downloads / external links) */
+  .stage-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: flex-end;
+    margin: -1rem 0 2.5rem;
+  }
+  .action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.1rem;
+    background: rgba(255, 212, 0, 0.06);
+    border: 1px solid rgba(255, 212, 0, 0.35);
+    color: var(--yellow);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    text-decoration: none;
+    transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
+  }
+  .action:hover {
+    background: var(--yellow);
+    color: var(--ink);
+    transform: translateY(-1px);
+  }
+  .action .ic {
+    font-size: 1.05em;
+    font-weight: 700;
+  }
+  .action .sz {
+    color: var(--muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    border-left: 1px solid rgba(255, 212, 0, 0.3);
+    padding-left: 0.6rem;
+    margin-left: 0.1rem;
+  }
+  .action:hover .sz {
+    color: rgba(15,15,15,0.55);
+    border-left-color: rgba(15,15,15,0.3);
+  }
+
+  /* narrative */
+  .narrative {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 3rem;
+    margin-top: 3rem;
+    align-items: start;
+  }
+  .narrative .story h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--yellow);
+    margin: 0 0 1rem;
+  }
+  .narrative .story p {
+    font-size: 1.02rem;
+    color: #cfcfcf;
+    margin: 0 0 1rem;
+  }
+  .narrative .story .lead {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+
+  .briefing {
+    background: linear-gradient(180deg, #181818, #121212);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+  .briefing h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--yellow);
+    margin: 0 0 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed var(--line);
+  }
+  .briefing ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .briefing li {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.92rem;
+  }
+  .briefing li:last-child { border-bottom: 0; }
+  .briefing li .k {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+  .briefing li .v { color: #e6e6e6; }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    padding: 5rem 6vw;
+    text-align: center;
+    border-top: 1px solid var(--line);
+  }
+  footer .logo {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 0.9;
+    margin: 0 0 1rem;
+    text-transform: uppercase;
+  }
+  footer .logo .y { color: var(--yellow); }
+  footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin: 0;
+  }
+  footer .credits {
+    margin-top: 2rem;
+    color: #555;
+    font-size: 0.7rem;
+  }
+
+  /* Leaflet dark tweaks */
+  .leaflet-container { background: #1a1a1a; }
+  .leaflet-control-attribution { font-size: 9px !important; background: rgba(0,0,0,0.6) !important; color: #999 !important; }
+  .leaflet-control-attribution a { color: #aaa !important; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 920px) {
+    .hero { padding: 2rem 5vw 4rem; }
+    .hero-footer { grid-template-columns: repeat(2, 1fr); }
+    .intro { grid-template-columns: 1fr; gap: 2rem; padding: 4rem 5vw 3rem; }
+    .stage { padding: 4rem 5vw 3rem; }
+    .stage-header { grid-template-columns: 1fr; gap: 1rem; padding-bottom: 1rem; }
+    .stage-number { font-size: 5rem; }
+    .stage-cat { text-align: left; }
+    .stage-stats { grid-template-columns: repeat(2, 1fr); }
+    .stage-panels { grid-template-columns: 1fr; }
+    .map { height: 360px; }
+    .chart-wrap { height: 320px; }
+    .climb-row { grid-template-columns: 50px 1fr; row-gap: 0.4rem; }
+    .climb-row .m { text-align: left; grid-column: span 1; }
+    .climb-row .name { grid-column: 2; }
+    .narrative { grid-template-columns: 1fr; gap: 2rem; }
+  }
+
+  /* animation */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="topbar">
+    <span class="badge">Édition 2026</span>
+    <span>Roadbook · v1.0 · 30 mai → 1 juin</span>
+  </div>
+
+  <div class="hero-main">
+    <div class="kicker">Le Grand Tour · Côte d'Azur</div>
+    <h1 class="title">
+      Trois jours.<br />
+      Trois cols.<br />
+      <span class="em">Une côte.</span>
+    </h1>
+    <p class="sub">
+      Da Cannes a Menton, in tre tappe. Il rosso vulcanico dell'Estérel, i ventidue tornanti
+      del Col de Braus, la salita-cronometro della Madone. Strade che i professionisti usano
+      per tarare la forma, e che noi ci concediamo per il gusto di farle senza guardare l'orologio.
+    </p>
+  </div>
+
+  <div class="hero-footer">
+    <div class="stat">
+      <span class="label">Distance totale</span>
+      <span class="value" id="total-dist">— <span class="unit">km</span></span>
+    </div>
+    <div class="stat">
+      <span class="label">Dénivelé positif</span>
+      <span class="value" id="total-gain">— <span class="unit">m D+</span></span>
+    </div>
+    <div class="stat">
+      <span class="label">Cols répertoriés</span>
+      <span class="value" id="total-cols">3 <span class="unit">cat.</span></span>
+    </div>
+    <div class="stat">
+      <span class="label">Plus haut point</span>
+      <span class="value" id="total-max">— <span class="unit">m</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- bandeau pois -->
+<div class="stripe"></div>
+
+<!-- ============ INTRO ============ -->
+<section class="intro">
+  <div>
+    <div class="label-block">— Prologo</div>
+    <h2>Tre tappe, scelte bene</h2>
+    <p>
+      L'idea è semplice: cominciare in modo elegante, salire d'intensità, finire con una salita
+      che racconta qualcosa. Sabato è un giro nell'Estérel per scaldare il motore. Domenica è
+      il giorno del Braus — la salita-cartolina della Riviera. Lunedì si chiude sulla Madone,
+      dove pedalano quelli che vincono il Tour.
+    </p>
+    <p>
+      Sabato giro nell'Estérel, Corniche d'Or al pomeriggio, cena a Cannes.
+      Domenica si sale il Braus al mattino, pranzo a Sospel, rientro su Menton dal Castillon.
+      Lunedì Madone presto, ritorno via Peille, ultimo caffè in costa.
+    </p>
+  </div>
+  <div class="pullquote">
+    « C'è una salita, nel sud della Francia, che uso come metro di misura.
+    Si chiama Col de la Madone. Quando sono in forma per il Tour, lo capisco lì. »
+    <span class="signature">— Lance Armstrong · <em>It's Not About the Bike</em>, 2000</span>
+  </div>
+</section>
+
+<div class="stripe"></div>
+
+<!-- ============ STAGES ============ -->
+<section class="stages">
+
+  <!-- STAGE 1: ESTEREL -->
+  <article class="stage" id="stage-1" data-key="2026-05-11_2435990165_Cannes + Esterel">
+    <header class="stage-header">
+      <div class="stage-number">01</div>
+      <div class="stage-title-wrap">
+        <div class="day">Sabato · 30 maggio 2026</div>
+        <h2>L'Estérel rosso</h2>
+        <div class="from-to">Cannes <span class="arrow">→</span> Massif de l'Estérel <span class="arrow">→</span> Corniche d'Or <span class="arrow">→</span> Cannes</div>
+      </div>
+      <div class="stage-cat">
+        Catégorie <span class="pill pill-medium">MEDIA</span>
+      </div>
+    </header>
+
+    <div class="stage-stats">
+      <div class="stat"><span class="label">Distanza</span><span class="value" data-k="distance_km">—<span class="unit">km</span></span></div>
+      <div class="stat"><span class="label">Dislivello +</span><span class="value" data-k="elevation_gain">—<span class="unit">m</span></span></div>
+      <div class="stat"><span class="label">Dislivello –</span><span class="value" data-k="elevation_loss">—<span class="unit">m</span></span></div>
+      <div class="stat"><span class="label">Punto più alto</span><span class="value" data-k="max_ele">—<span class="unit">m</span></span></div>
+      <div class="stat"><span class="label">Punto più basso</span><span class="value" data-k="min_ele">—<span class="unit">m</span></span></div>
+    </div>
+
+    <div class="stage-panels">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>◉ Tracciato</h3>
+          <span class="meta">Komoot · 2356 punti</span>
+        </div>
+        <div class="map" id="map-1"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>◢ Altimetria</h3>
+          <span class="meta">Profilo elevazione</span>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-1"></canvas></div>
+      </div>
+    </div>
+
+    <div class="stage-actions">
+      <a class="action" href="gpx/esterel.gpx" download="esterel-cannes-2026.gpx">
+        <span class="ic">↓</span> Scarica GPX <span class="sz">311 KB</span>
+      </a>
+    </div>
+
+    <div class="climbs">
+      <h3>Salite di giornata</h3>
+      <div class="climb-row">
+        <div class="cat">4</div>
+        <div class="name">Col Notre-Dame des Anges<small>il muretto interno dell'Estérel</small></div>
+        <div class="m"><span class="lbl">km</span>≈ 6.0</div>
+        <div class="m"><span class="lbl">D+</span>≈ 320 m</div>
+        <div class="m"><span class="lbl">pend. media</span>≈ 5%</div>
+      </div>
+      <div class="climb-row">
+        <div class="cat">4</div>
+        <div class="name">Col de l'Auriasque<small>dentro il Parc Naturel · discesa su Fréjus</small></div>
+        <div class="m"><span class="lbl">km</span>≈ 5.0</div>
+        <div class="m"><span class="lbl">D+</span>≈ 220 m</div>
+        <div class="m"><span class="lbl">pend. media</span>≈ 4.5%</div>
+      </div>
+      <div class="climb-row">
+        <div class="cat">5</div>
+        <div class="name">Strappi della Corniche d'Or<small>il dispetto tra Théoule e Cannes</small></div>
+        <div class="m"><span class="lbl">km</span>≈ 22</div>
+        <div class="m"><span class="lbl">D+</span>≈ 300 m</div>
+        <div class="m"><span class="lbl">pend. media</span>≈ rolling</div>
+      </div>
+    </div>
+
+    <div class="narrative">
+      <div class="story">
+        <h4>— Lo spirito della tappa</h4>
+        <div class="lead">L'antipasto. Settantanove chilometri di porfido rosso e mare aperto, giusto per ricordare alle gambe che esistono.</div>
+        <p>
+          Il <strong>Massif de l'Estérel</strong> è una colata di roccia vulcanica che si tuffa
+          dritta nel Mediterraneo. Si parte da Cannes col motore freddo, si entra nel parco
+          naturale, e per due ore si passa di cresta in cresta su salite che non superano mai
+          i 350 metri ma che — sommate — fanno quasi 900 metri di dislivello. Niente strappi
+          eroici: ritmo, paesaggio, primo caffè.
+        </p>
+        <p>
+          Dopo il <strong>Col de l'Auriasque</strong> si scende a Fréjus e ci si attacca alla
+          <strong>Corniche d'Or</strong>, la strada che il Touring Club ha inaugurato nel 1903
+          dinamitando il lato a mare dell'Estérel per far passare due ruote. Tornanti larghi
+          a strapiombo, calette color smeraldo, qualche moto da catalogare la domenica.
+          Si torna a Cannes col sole basso e una buona idea di chi sta bene.
+        </p>
+        <p>
+          Tappa per fare il punto. Quella che dirà se domani al Braus si parte rilassati
+          o con il dubbio.
+        </p>
+      </div>
+      <aside class="briefing">
+        <h4>Briefing</h4>
+        <ul>
+          <li><span class="k">Difficoltà</span><span class="v">★★☆☆☆ scaldamotore</span></li>
+          <li><span class="k">Highlight</span><span class="v">Corniche d'Or al pomeriggio</span></li>
+          <li><span class="k">Acqua</span><span class="v">Fréjus (km 30) · Théoule (km 55)</span></li>
+          <li><span class="k">Foto</span><span class="v">Pointe de l'Esquillon · Cap du Dramont</span></li>
+          <li><span class="k">Pranzo</span><span class="v">panino in tasca · cena vera a Cannes</span></li>
+          <li><span class="k">Insidia</span><span class="v">moto e turisti sulla Corniche</span></li>
+          <li><span class="k">Vento</span><span class="v">Mistral a tratti, da est</span></li>
+        </ul>
+      </aside>
+    </div>
+  </article>
+
+  <!-- STAGE 2: BRAUS -->
+  <article class="stage" id="stage-2" data-key="2026-05-11_2430745300_Menton_Col de Braus">
+    <header class="stage-header">
+      <div class="stage-number">02</div>
+      <div class="stage-title-wrap">
+        <div class="day">Domenica · 31 maggio 2026</div>
+        <h2>I tornanti del Braus</h2>
+        <div class="from-to">Menton <span class="arrow">→</span> Sospel <span class="arrow">→</span> Col de Braus <span class="arrow">→</span> La Turbie <span class="arrow">→</span> Menton</div>
+      </div>
+      <div class="stage-cat">
+        Catégorie <span class="pill pill-hard">DURA</span>
+      </div>
+    </header>
+
+    <div class="stage-stats">
+      <div class="stat"><span class="label">Distanza</span><span class="value" data-k="distance_km">—<span class="unit">km</span></span></div>
+      <div class="stat"><span class="label">Dislivello +</span><span class="value" data-k="elevation_gain">—<span class="unit">m</span></span></div>
+      <div class="stat"><span class="label">Dislivello –</span><span class="value" data-k="elevation_loss">—<span class="unit">m</span></span></div>
+      <div class="stat"><span class="label">Punto più alto</span><span class="value" data-k="max_ele">—<span class="unit">m</span></span></div>
+      <div class="stat"><span class="label">Punto più basso</span><span class="value" data-k="min_ele">—<span class="unit">m</span></span></div>
+    </div>
+
+    <div class="stage-panels">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>◉ Tracciato</h3>
+          <span class="meta">Komoot · 2329 punti</span>
+        </div>
+        <div class="map" id="map-2"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>◢ Altimetria</h3>
+          <span class="meta">Profilo elevazione</span>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-2"></canvas></div>
+      </div>
+    </div>
+
+    <div class="stage-actions">
+      <a class="action" href="gpx/braus.gpx" download="braus-menton-2026.gpx">
+        <span class="ic">↓</span> Scarica GPX <span class="sz">310 KB</span>
+      </a>
+    </div>
+
+    <div class="climbs">
+      <h3>Salite di giornata</h3>
+      <div class="climb-row">
+        <div class="cat">1</div>
+        <div class="name">Col de Braus · 1002 m<small>versante Sospel · 22 tornanti scolpiti nel 1909</small></div>
+        <div class="m"><span class="lbl">km</span>≈ 10.0</div>
+        <div class="m"><span class="lbl">D+</span>≈ 670 m</div>
+        <div class="m"><span class="lbl">pend. media</span>≈ 6.6%</div>
+      </div>
+      <div class="climb-row">
+        <div class="cat">2</div>
+        <div class="name">Col de Castillon · 706 m<small>l'ultimo guardiano prima di Menton</small></div>
+        <div class="m"><span class="lbl">km</span>≈ 7.5</div>
+        <div class="m"><span class="lbl">D+</span>≈ 380 m</div>
+        <div class="m"><span class="lbl">pend. media</span>≈ 5.1%</div>
+      </div>
+      <div class="climb-row">
+        <div class="cat">3</div>
+        <div class="name">La Turbie · Grande Corniche<small>balcone sul Maybourne Riviera</small></div>
+        <div class="m"><span class="lbl">km</span>≈ 8.0</div>
+        <div class="m"><span class="lbl">D+</span>≈ 480 m</div>
+        <div class="m"><span class="lbl">pend. media</span>≈ 6%</div>
+      </div>
+    </div>
+
+    <div class="narrative">
+      <div class="story">
+        <h4>— Lo spirito della tappa</h4>
+        <div class="lead">Il piatto forte. Settantadue chilometri di Alpi che cadono in mare, e in mezzo i tornanti più fotografati delle Marittime.</div>
+        <p>
+          Dieci chilometri da Sospel alla cima del <strong>Col de Braus</strong>, pendenza media
+          6.6%, ventidue tornanti perfetti — disegnati da un genio anonimo nel 1909 e ancora oggi
+          la salita più riconoscibile del Mediterraneo. Quando ci si gira a guardarli da sopra,
+          sembrano scritti sulla parete del monte con la riga: una serpentina geometrica che
+          giustifica da sola tutta la trasferta.
+        </p>
+        <p>
+          Ma il Braus è solo la firma. La tappa accumula <strong>1730 metri di dislivello</strong>
+          incollando il Col de Braus, il <strong>Col de Castillon</strong> e una manciata di
+          strappi sopra Monaco. In mezzo c'è <strong>Sospel</strong> — borgo di pietra in fondo
+          a una valle silenziosa, perfetto per fermarsi a sciacquare le borracce — e in cima a
+          tutto, panorama che nei giorni puliti arriva fino alla Corsica.
+        </p>
+        <p>
+          Si chiude con la rampa di <strong>La Turbie</strong> a vista sul <strong>Maybourne
+          Riviera</strong>: cinquecento metri di dislivello fatti in silenzio per ricordare alle
+          gambe che oggi era il giorno serio. Discesa elegante su Menton, doccia, e una cena
+          ricevuta come si riceve uno stipendio meritato.
+        </p>
+      </div>
+      <aside class="briefing">
+        <h4>Briefing</h4>
+        <ul>
+          <li><span class="k">Difficoltà</span><span class="v">★★★★☆ la regina</span></li>
+          <li><span class="k">Highlight</span><span class="v">i 22 tornanti del Braus dall'alto</span></li>
+          <li><span class="k">Acqua</span><span class="v">Sospel (km 22) · L'Escarène (km 40)</span></li>
+          <li><span class="k">Foto</span><span class="v">muretto in cima al Braus · ore 11</span></li>
+          <li><span class="k">Pranzo</span><span class="v">Sospel, socca calda · niente di pesante</span></li>
+          <li><span class="k">Insidia</span><span class="v">discesa stretta, moto sul Braus la domenica</span></li>
+          <li><span class="k">Mood</span><span class="v">il giorno in cui si guadagna la cena</span></li>
+        </ul>
+      </aside>
+    </div>
+  </article>
+
+  <!-- STAGE 3: MADONE -->
+  <article class="stage" id="stage-3" data-key="2026-05-11_2430735056_Menton_Madone">
+    <header class="stage-header">
+      <div class="stage-number">03</div>
+      <div class="stage-title-wrap">
+        <div class="day">Lunedì · 1 giugno 2026</div>
+        <h2>La Madone dei pro</h2>
+        <div class="from-to">Menton <span class="arrow">→</span> Sainte-Agnès <span class="arrow">→</span> Col de la Madone <span class="arrow">→</span> Peille <span class="arrow">→</span> Menton</div>
+      </div>
+      <div class="stage-cat">
+        Catégorie <span class="pill pill-hc">HC</span>
+      </div>
+    </header>
+
+    <div class="stage-stats">
+      <div class="stat"><span class="label">Distanza</span><span class="value" data-k="distance_km">—<span class="unit">km</span></span></div>
+      <div class="stat"><span class="label">Dislivello +</span><span class="value" data-k="elevation_gain">—<span class="unit">m</span></span></div>
+      <div class="stat"><span class="label">Dislivello –</span><span class="value" data-k="elevation_loss">—<span class="unit">m</span></span></div>
+      <div class="stat"><span class="label">Punto più alto</span><span class="value" data-k="max_ele">—<span class="unit">m</span></span></div>
+      <div class="stat"><span class="label">Punto più basso</span><span class="value" data-k="min_ele">—<span class="unit">m</span></span></div>
+    </div>
+
+    <div class="stage-panels">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>◉ Tracciato</h3>
+          <span class="meta">Komoot · 2446 punti</span>
+        </div>
+        <div class="map" id="map-3"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>◢ Altimetria</h3>
+          <span class="meta">Profilo elevazione</span>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-3"></canvas></div>
+      </div>
+    </div>
+
+    <div class="stage-actions">
+      <a class="action" href="gpx/madone.gpx" download="madone-menton-2026.gpx">
+        <span class="ic">↓</span> Scarica GPX <span class="sz">324 KB</span>
+      </a>
+    </div>
+
+    <div class="climbs">
+      <h3>Salite di giornata</h3>
+      <div class="climb-row">
+        <div class="cat">1</div>
+        <div class="name">Col de la Madone · 925 m<small>il watt-test di Armstrong, Froome, Bernal</small></div>
+        <div class="m"><span class="lbl">km</span>≈ 13.0</div>
+        <div class="m"><span class="lbl">D+</span>≈ 900 m</div>
+        <div class="m"><span class="lbl">pend. media</span>≈ 6.9%</div>
+      </div>
+      <div class="climb-row">
+        <div class="cat">3</div>
+        <div class="name">Sainte-Agnès · 780 m<small>il borgo più alto a picco sul Mediterraneo d'Europa</small></div>
+        <div class="m"><span class="lbl">km</span>≈ 8.5</div>
+        <div class="m"><span class="lbl">D+</span>≈ 600 m</div>
+        <div class="m"><span class="lbl">pend. media</span>≈ 7%</div>
+      </div>
+      <div class="climb-row">
+        <div class="cat">3</div>
+        <div class="name">Rilanci sul ritorno<small>strappi tra Peille e Roquebrune</small></div>
+        <div class="m"><span class="lbl">km</span>≈ 10</div>
+        <div class="m"><span class="lbl">D+</span>≈ 350 m</div>
+        <div class="m"><span class="lbl">pend. media</span>≈ rolling</div>
+      </div>
+    </div>
+
+    <div class="narrative">
+      <div class="story">
+        <h4>— Lo spirito della tappa</h4>
+        <div class="lead">Il giudice di pace. La salita-cronometro che non dà spiegazioni, dà risposte.</div>
+        <p>
+          Il <strong>Col de la Madone</strong> non è la salita più dura della Riviera, ma è quella
+          che non perdona. Tredici chilometri di pendenza onesta, mai sotto il 6%, mai sopra il 9%.
+          È per questo che <strong>Armstrong</strong> ci faceva i test, <strong>Froome</strong>
+          ci faceva i test, <strong>Bernal</strong> ci fa i test — e una decina di pro residenti
+          a Monaco la salgono almeno una volta a settimana. Affrontarla è chiedersi una risposta
+          onesta sulle gambe.
+        </p>
+        <p>
+          Si parte da Menton, si attraversa <strong>Sainte-Agnès</strong> — il borgo medievale
+          più alto a picco sul Mediterraneo d'Europa, posizione impossibile da sbagliare in foto —
+          e si entra nel bosco. Da lì in poi è cadenza, respiro, ritmo. Asfalto perfetto, silenzio
+          assoluto, qualche capra di passaggio. In cima non c'è un bar, non c'è una piazza, non
+          c'è quasi nessuno: c'è un cartello, una croce di pietra, e una vista che non chiede
+          applausi.
+        </p>
+        <p>
+          Discesa scenografica verso <strong>Peille</strong>, il borgo aggrappato alla roccia,
+          poi rientro in costa con due-tre strappi che ricordano alle gambe il riassunto del weekend.
+          Tappa breve, vera, asciutta — il tipo di giornata che si ricorda anche a Natale.
+        </p>
+      </div>
+      <aside class="briefing">
+        <h4>Briefing</h4>
+        <ul>
+          <li><span class="k">Difficoltà</span><span class="v">★★★★★ tappa-mito</span></li>
+          <li><span class="k">Highlight</span><span class="v">il silenzio sopra Sainte-Agnès</span></li>
+          <li><span class="k">Acqua</span><span class="v">Sainte-Agnès (km 8) · poi più niente fino a Peille</span></li>
+          <li><span class="k">Foto</span><span class="v">Sainte-Agnès dal basso · cartello del Col</span></li>
+          <li><span class="k">Pranzo</span><span class="v">Peille al ritorno, terrazza con vista</span></li>
+          <li><span class="k">Insidia</span><span class="v">non scaldare, la Madone te lo fa pagare</span></li>
+          <li><span class="k">Mood</span><span class="v">salire come se fosse l'ultima volta</span></li>
+        </ul>
+      </aside>
+    </div>
+  </article>
+
+</section>
+
+<div class="stripe"></div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="logo">À bientôt sur la <span class="y">route</span>.</div>
+  <p>Le Grand Tour de la Côte d'Azur · Édition 2026</p>
+  <div class="credits">
+    Roadbook generato il 11 maggio 2026 · GPX & dati Komoot · Mappe © OpenStreetMap contributors
+  </div>
+</footer>
+
+<!-- =================== DATA + LOGIC =================== -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  // Headline totals come from Komoot (authoritative). Chart/map points come from the GPX.
+  // The custom parser smoothed too aggressively, undershooting D+ by ~20% — these match
+  // exactly what Komoot reports for the three tracks.
+  const KOMOOT = {
+    '2026-05-11_2435990165_Cannes + Esterel':    { distance_km: 79.1, elevation_gain: 890,  elevation_loss: 890  },
+    '2026-05-11_2430745300_Menton_Col de Braus': { distance_km: 72.1, elevation_gain: 1730, elevation_loss: 1730 },
+    '2026-05-11_2430735056_Menton_Madone':       { distance_km: 75.4, elevation_gain: 1510, elevation_loss: 1510 },
+  };
+
+  // Data is fetched from data.min.json (sibling file) — works on Vercel static hosting.
+  fetch('data.min.json')
+    .then(r => r.json())
+    .then(init)
+    .catch(err => console.error('Cannot load data.min.json', err));
+
+  function fmt(n) {
+    return new Intl.NumberFormat('it-IT', { maximumFractionDigits: 1 }).format(n);
+  }
+
+  function init(data) {
+    const stages = document.querySelectorAll('.stage');
+    let totDist = 0, totGain = 0, maxEle = 0;
+
+    stages.forEach((stageEl, idx) => {
+      const key = stageEl.dataset.key;
+      const s = data[key];
+      if (!s) {
+        console.warn('Missing stage data for', key);
+        return;
+      }
+
+      const stats = { ...s, ...(KOMOOT[key] || {}) };
+
+      totDist += stats.distance_km;
+      totGain += stats.elevation_gain;
+      if (stats.max_ele > maxEle) maxEle = stats.max_ele;
+
+      // fill stats (Komoot values override the parsed ones for distance/gain/loss)
+      stageEl.querySelectorAll('.stat .value[data-k]').forEach(el => {
+        const k = el.dataset.k;
+        const v = stats[k];
+        const unit = el.querySelector('.unit')?.outerHTML || '';
+        el.innerHTML = fmt(v) + unit;
+      });
+
+      // build map (uses raw GPX track)
+      renderMap(`map-${idx + 1}`, s);
+      // build chart (uses raw GPX elevation samples — the curve shape is correct)
+      renderChart(`chart-${idx + 1}`, s);
+    });
+
+    document.getElementById('total-dist').innerHTML = fmt(totDist) + ' <span class="unit">km</span>';
+    document.getElementById('total-gain').innerHTML = fmt(totGain) + ' <span class="unit">m D+</span>';
+    document.getElementById('total-max').innerHTML = fmt(maxEle) + ' <span class="unit">m</span>';
+
+    // reveal animation
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.stage, .intro, .hero-footer').forEach(el => {
+      el.classList.add('reveal');
+      io.observe(el);
+    });
+  }
+
+  function renderMap(id, stage) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const map = L.map(el, {
+      zoomControl: true,
+      scrollWheelZoom: false,
+      attributionControl: true,
+    });
+
+    // CARTO Voyager — clean and bright, great for cycling routes
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OSM &copy; CARTO',
+      subdomains: 'abcd',
+      maxZoom: 19,
+    }).addTo(map);
+
+    const latlngs = stage.map_points.map(p => [p[0], p[1]]);
+
+    // glow + main route
+    L.polyline(latlngs, {
+      color: '#FFD400', weight: 9, opacity: 0.20, lineCap: 'round', lineJoin: 'round'
+    }).addTo(map);
+    L.polyline(latlngs, {
+      color: '#E63946', weight: 4, opacity: 0.95, lineCap: 'round', lineJoin: 'round'
+    }).addTo(map);
+
+    // start/end markers
+    const startIcon = L.divIcon({
+      className: '',
+      html: '<div style="background:#FFD400;color:#0F0F0F;font-family:Anton,sans-serif;font-size:14px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #0F0F0F;box-shadow:0 2px 8px rgba(0,0,0,0.5);">S</div>',
+      iconSize: [28, 28], iconAnchor: [14, 14],
+    });
+    L.marker([stage.start.lat, stage.start.lon], { icon: startIcon }).addTo(map);
+
+    // waypoints (cols)
+    stage.waypoints.forEach(w => {
+      const isCol = /col|colle/i.test(w.name);
+      const icon = L.divIcon({
+        className: '',
+        html: `<div style="background:${isCol ? '#E63946' : '#0B6FA7'};color:#fff;font-family:JetBrains Mono,monospace;font-weight:700;font-size:11px;padding:4px 8px;border-radius:4px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.4);white-space:nowrap;">${isCol ? '▲ ' : '◉ '}${escapeHtml(w.name).split('·')[0].split('–')[0].slice(0, 28)}</div>`,
+        iconSize: null, iconAnchor: [0, 12],
+      });
+      L.marker([w.lat, w.lon], { icon }).addTo(map);
+    });
+
+    map.fitBounds([
+      [stage.bounds.south, stage.bounds.west],
+      [stage.bounds.north, stage.bounds.east]
+    ], { padding: [25, 25] });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+
+  function renderChart(id, stage) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    const data = stage.chart;
+    const labels = data.map(p => (p.d / 1000).toFixed(1));
+    const eles = data.map(p => p.e);
+
+    const grad = ctx.getContext('2d').createLinearGradient(0, 0, 0, 460);
+    grad.addColorStop(0, 'rgba(255, 212, 0, 0.55)');
+    grad.addColorStop(1, 'rgba(255, 212, 0, 0.02)');
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Elevazione (m)',
+          data: eles,
+          fill: true,
+          backgroundColor: grad,
+          borderColor: '#FFD400',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.35,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0F0F0F',
+            titleColor: '#FFD400',
+            bodyColor: '#fff',
+            borderColor: '#FFD400',
+            borderWidth: 1,
+            padding: 10,
+            titleFont: { family: 'JetBrains Mono', size: 11, weight: '600' },
+            bodyFont: { family: 'Inter', size: 13 },
+            callbacks: {
+              title: (items) => `km ${items[0].label}`,
+              label: (item) => `Quota: ${Math.round(item.parsed.y)} m`,
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: '#888',
+              font: { family: 'JetBrains Mono', size: 10 },
+              maxTicksLimit: 10,
+              callback: function(val, idx) {
+                const km = parseFloat(this.getLabelForValue(val));
+                return idx === 0 || km % 10 < 0.5 ? km.toFixed(0) + ' km' : '';
+              }
+            },
+            grid: { color: 'rgba(255,255,255,0.04)' },
+          },
+          y: {
+            ticks: {
+              color: '#888',
+              font: { family: 'JetBrains Mono', size: 10 },
+              callback: v => v + ' m',
+            },
+            grid: { color: 'rgba(255,255,255,0.06)' },
+            beginAtZero: false,
+          }
+        },
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
