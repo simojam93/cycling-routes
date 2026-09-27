@@ -1,8 +1,12 @@
-# Cycling Routes
+<h1 align="center">Cycling Routes</h1>
 
-Four hand-built websites for planning multi-day cycling trips: roadbooks with stages, maps, elevation profiles and GPX tracks. All plain HTML/CSS/JS, no frameworks.
+<p align="center">
+  Four hand-built websites for planning multi-day cycling trips:<br>
+  roadbooks with stages, maps, elevation profiles and GPX tracks.
+</p>
 
-The sites are in Italian because they are made to be used with friends, on the road.
+All plain HTML, CSS and JavaScript, with no frameworks. The sites are in Italian because they are made to
+be used with friends, on the road.
 
 Each site is **deliberately built differently from the others**: different layout, different visual identity, different way of handling maps and the mobile version. That is the point. Every trip was also an excuse to try a new approach and learn something. For the same reason, two sites are deployed on **Netlify** and two on **Vercel**, to get hands-on with both platforms.
 
