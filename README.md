@@ -1,4 +1,4 @@
-<h1 align="center">Cycling Routes</h1>
+<h1 align="center">cycling-routes</h1>
 
 <p align="center">
   Four hand-built websites for planning multi-day cycling trips:<br>
